@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Settings - Aura Resource Platform Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark admin-body">
+
+    <!-- Header Navigation -->
+    <header class="header-glass navbar admin-navbar">
+        <div class="container nav-wrapper">
+            <a href="../index.html" class="brand-logo">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+                <span class="badge badge-primary ml-2">ADMIN</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="resources.html" class="nav-link">Categories</a>
+                <a href="items.html" class="nav-link">Releases</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="files.html" class="nav-link">Files</a>
+                <a href="analytics.html" class="nav-link">Analytics</a>
+                <a href="settings.html" class="nav-link active">Settings</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="user-email-display" id="user-email">auth@aura.internal</span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main-padding">
+        <!-- Breadcrumbs & Header -->
+        <div class="admin-page-header mb-4">
+            <div>
+                <nav class="breadcrumb-nav mb-2" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Admin</a></li>
+                        <li class="breadcrumb-item active">Settings</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Global Configuration</h1>
+                <p class="text-secondary">Manage site metadata, download delivery behavior, monetization scripts, and operational modes.</p>
+            </div>
+            <div>
+                <button type="button" id="btn-save-settings" class="btn btn-primary btn-md">
+                    <span>💾</span> Save All Settings
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="admin-alert" class="alert-box hidden mb-4" role="alert"></div>
+
+        <form id="settings-form" onsubmit="event.preventDefault(); saveSettings();">
+            <div class="admin-grid-2col mb-4">
+                
+                <!-- General Branding -->
+                <div class="glass-card p-4">
+                    <h3 class="mb-3">Site Branding & Identity</h3>
+                    <p class="text-secondary mb-4">Core platform labels, slogans, and primary contact points.</p>
+                    
+                    <div class="form-group mb-3">
+                        <label for="setting-siteName" class="form-label">Platform Name</label>
+                        <input type="text" id="setting-siteName" class="form-control" placeholder="AURA" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="setting-siteTagline" class="form-label">Hero Tagline</label>
+                        <input type="text" id="setting-siteTagline" class="form-control" placeholder="High-performance resource & binary hub">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="setting-contactEmail" class="form-label">Support / Admin Email</label>
+                        <input type="email" id="setting-contactEmail" class="form-control" placeholder="support@aura.internal">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="setting-logoUrl" class="form-label">Custom Logo Asset URL</label>
+                        <input type="url" id="setting-logoUrl" class="form-control" placeholder="https://cdn.aura.internal/logo.svg">
+                    </div>
+                </div>
+
+                <!-- Download & Delivery Controls -->
+                <div class="glass-card p-4">
+                    <h3 class="mb-3">Download Hub Configuration</h3>
+                    <p class="text-secondary mb-4">Control timer delays, rate limits, and system availability.</p>
+
+                    <div class="form-group mb-3">
+                        <label for="setting-downloadTimerSec" class="form-label">Download Countdown Timer (Seconds)</label>
+                        <input type="number" id="setting-downloadTimerSec" class="form-control" min="0" max="120" value="10">
+                        <small class="text-muted">Delay enforced before mirror links unlock for users.</small>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="setting-maxDailyDownloads" class="form-label">Free Tier Daily Limit (per IP)</label>
+                        <input type="number" id="setting-maxDailyDownloads" class="form-control" min="0" value="25">
+                        <small class="text-muted">Set to 0 for unlimited downloads.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label d-block mb-2">Platform Status</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="setting-maintenanceMode">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label ml-2">Enable Maintenance Mode (Restricts public access)</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Monetization & Ad Network Configuration -->
+            <div class="glass-card p-4 mb-4">
+                <div class="flex-between mb-3">
+                    <div>
+                        <h3 class="mb-1">Monetization & Ad Network Trigger</h3>
+                        <p class="text-secondary">Inject custom ad network scripts, banners, or popunder triggers onto target pages.</p>
+                    </div>
+                    <div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="setting-adEnabled">
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label ml-2">Monetization Active</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="setting-adScriptSnippet" class="form-label">Ad Network JavaScript Snippet</label>
+                    <textarea id="setting-adScriptSnippet" class="form-control code-font" rows="5" placeholder="<!-- Insert ad network script tag, Native Ads, or trigger code here -->"></textarea>
+                    <small class="text-muted">This script will automatically execute on download timer trigger and single release view pages when active.</small>
+                </div>
+            </div>
+
+            <!-- SEO & Meta Tags -->
+            <div class="glass-card p-4 mb-4">
+                <h3 class="mb-3">SEO & Social Meta Configuration</h3>
+                <p class="text-secondary mb-4">Default search engine previews and OpenGraph tags.</p>
+
+                <div class="form-group mb-3">
+                    <label for="setting-metaDescription" class="form-label">Meta Description</label>
+                    <textarea id="setting-metaDescription" class="form-control" rows="2" placeholder="Discover and download premium digital materials, binaries, and developer kits."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="setting-ogImageUrl" class="form-label">OpenGraph Social Preview Image URL</label>
+                    <input type="url" id="setting-ogImageUrl" class="form-control" placeholder="https://cdn.aura.internal/og-preview.jpg">
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getFirestore, doc, getDoc, setDoc 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('user-email').textContent = user.email;
+                loadSettings();
+            }
+        });
+
+        // Sign Out
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        // Load Settings Document
+        async function loadSettings() {
+            try {
+                const docRef = doc(db, "settings", "global");
+                const snap = await getDoc(docRef);
+
+                if (snap.exists()) {
+                    const data = snap.data();
+                    document.getElementById('setting-siteName').value = data.siteName || '';
+                    document.getElementById('setting-siteTagline').value = data.siteTagline || '';
+                    document.getElementById('setting-contactEmail').value = data.contactEmail || '';
+                    document.getElementById('setting-logoUrl').value = data.logoUrl || '';
+                    document.getElementById('setting-downloadTimerSec').value = data.downloadTimerSec ?? 10;
+                    document.getElementById('setting-maxDailyDownloads').value = data.maxDailyDownloads ?? 25;
+                    document.getElementById('setting-maintenanceMode').checked = !!data.maintenanceMode;
+                    document.getElementById('setting-adEnabled').checked = !!data.adEnabled;
+                    document.getElementById('setting-adScriptSnippet').value = data.adScriptSnippet || '';
+                    document.getElementById('setting-metaDescription').value = data.metaDescription || '';
+                    document.getElementById('setting-ogImageUrl').value = data.ogImageUrl || '';
+
+                    if (data.siteName) {
+                        document.getElementById('brand-name').textContent = data.siteName;
+                    }
+                }
+            } catch (err) {
+                showAlert("Failed to load global settings: " + err.message, true);
+            }
+        }
+
+        // Save Settings Document
+        window.saveSettings = async function() {
+            const btn = document.getElementById('btn-save-settings');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> Saving...';
+
+            const payload = {
+                siteName: document.getElementById('setting-siteName').value.trim(),
+                siteTagline: document.getElementById('setting-siteTagline').value.trim(),
+                contactEmail: document.getElementById('setting-contactEmail').value.trim(),
+                logoUrl: document.getElementById('setting-logoUrl').value.trim(),
+                downloadTimerSec: parseInt(document.getElementById('setting-downloadTimerSec').value, 10) || 0,
+                maxDailyDownloads: parseInt(document.getElementById('setting-maxDailyDownloads').value, 10) || 0,
+                maintenanceMode: document.getElementById('setting-maintenanceMode').checked,
+                adEnabled: document.getElementById('setting-adEnabled').checked,
+                adScriptSnippet: document.getElementById('setting-adScriptSnippet').value,
+                metaDescription: document.getElementById('setting-metaDescription').value.trim(),
+                ogImageUrl: document.getElementById('setting-ogImageUrl').value.trim(),
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                await setDoc(doc(db, "settings", "global"), payload, { merge: true });
+                showAlert("Settings saved successfully!");
+                document.getElementById('brand-name').textContent = payload.siteName || 'AURA';
+            } catch (err) {
+                showAlert("Error updating settings: " + err.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>💾</span> Save All Settings';
+            }
+        };
+
+        document.getElementById('btn-save-settings').addEventListener('click', window.saveSettings);
+
+        // Helper: Alert Notification
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.textContent = msg;
+            alertBox.className = `alert-box ${isError ? 'alert-danger' : 'alert-success'} mb-4`;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+    </script>
+</body>
+</html>

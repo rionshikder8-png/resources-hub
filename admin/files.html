@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Files - Aura Resource Platform Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark admin-body">
+
+    <!-- Header Navigation -->
+    <header class="header-glass navbar admin-navbar">
+        <div class="container nav-wrapper">
+            <a href="../index.html" class="brand-logo">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+                <span class="badge badge-primary ml-2">ADMIN</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="resources.html" class="nav-link">Categories</a>
+                <a href="items.html" class="nav-link">Releases</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="files.html" class="nav-link active">Files</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="user-email-display" id="user-email">auth@aura.internal</span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main-padding">
+        <!-- Breadcrumbs & Header -->
+        <div class="admin-page-header mb-4">
+            <div>
+                <nav class="breadcrumb-nav mb-2" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Admin</a></li>
+                        <li class="breadcrumb-item active">File Repository</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Direct File & Binary Storage</h1>
+                <p class="text-secondary">Register raw download links, binary mirrors, checksum hashes, and static host packages.</p>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-glow" onclick="openFileModal()">
+                    <span>+ Add File Mirror</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="admin-alert" class="alert-box hidden mb-4" role="alert"></div>
+
+        <!-- Metric Cards Grid -->
+        <div class="stats-counter-grid mb-4">
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">💾</div>
+                <div class="stat-number" id="stat-total-files">0</div>
+                <div class="stat-heading">Total File Records</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-number" id="stat-apk-zip-count">0</div>
+                <div class="stat-heading">Archives & Packages</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">🔐</div>
+                <div class="stat-number" id="stat-verified-checksum">0</div>
+                <div class="stat-heading">Verified Hashes</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📥</div>
+                <div class="stat-number" id="stat-total-file-downloads">0</div>
+                <div class="stat-heading">Direct Downloads</div>
+            </div>
+        </div>
+
+        <!-- Controls / Search Toolbar -->
+        <div class="glass-card p-3 mb-4 flex-between-toolbar">
+            <div class="search-input-wrapper">
+                <input type="text" id="file-search-input" class="form-control" placeholder="Search files by name, extension, or SHA256..." oninput="filterFiles()">
+            </div>
+            <div class="filter-controls">
+                <select id="file-filter-ext" class="form-control" onchange="filterFiles()">
+                    <option value="all">All Formats</option>
+                    <option value="zip">.ZIP Archive</option>
+                    <option value="apk">.APK Application</option>
+                    <option value="exe">.EXE / Binary</option>
+                    <option value="pdf">.PDF Document</option>
+                    <option value="other">Other Ext</option>
+                </select>
+                <select id="file-filter-status" class="form-control" onchange="filterFiles()">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active Mirror</option>
+                    <option value="deprecated">Deprecated</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Files Data Table -->
+        <div class="glass-card p-4">
+            <div class="table-responsive">
+                <table class="table-glass">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Ext</th>
+                            <th>Size</th>
+                            <th>Checksum (SHA-256)</th>
+                            <th>Status</th>
+                            <th>Downloads</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="files-tbody">
+                        <tr>
+                            <td colspan="7" class="text-center">Loading storage repository...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create / Edit File Modal Dialog -->
+    <div id="modal-file" class="modal-backdrop hidden">
+        <div class="glass-card modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Register File Record</h3>
+                <button class="modal-close-btn" onclick="closeFileModal()">✕</button>
+            </div>
+            <form id="form-file-modal">
+                <input type="hidden" id="modal-file-id">
+                <div class="modal-body admin-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Display Title *</label>
+                        <input type="text" id="modal-file-title" class="form-control" placeholder="e.g. Aura Engine v2.1.0 Android Build" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Raw File Name *</label>
+                        <input type="text" id="modal-file-name" class="form-control" placeholder="aura-engine-v2.1.0.apk" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">File Extension *</label>
+                        <select id="modal-file-ext" class="form-control" required>
+                            <option value="apk">.APK (Android Application)</option>
+                            <option value="zip">.ZIP (Compressed Archive)</option>
+                            <option value="exe">.EXE (Executable Binary)</option>
+                            <option value="pdf">.PDF (Document File)</option>
+                            <option value="other">Other Format</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">File Size *</label>
+                        <input type="text" id="modal-file-size" class="form-control" placeholder="e.g. 48.2 MB" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Direct Storage / CDN URL *</label>
+                        <input type="url" id="modal-file-url" class="form-control" placeholder="https://cdn.aura-platform.org/builds/app-release.apk" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">SHA-256 Hash Integrity Check</label>
+                        <input type="text" id="modal-file-hash" class="form-control" placeholder="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mirror Status</label>
+                        <select id="modal-file-status" class="form-control">
+                            <option value="active">Active Mirror</option>
+                            <option value="deprecated">Deprecated</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeFileModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-glow" id="btn-save-modal">Save File Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let filesList = [];
+
+        // Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('user-email').textContent = user.email;
+                loadFileManager();
+            }
+        });
+
+        // Sign Out
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        // Load Global Data
+        async function loadFileManager() {
+            try {
+                // Fetch Settings for Brand Name
+                const setSnap = await getDoc(doc(db, "settings", "global"));
+                if (setSnap.exists() && setSnap.data().siteName) {
+                    document.getElementById('brand-name').textContent = setSnap.data().siteName;
+                }
+
+                // Fetch Files Collection
+                const fileSnap = await getDocs(collection(db, "files"));
+                filesList = fileSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                renderMetrics();
+                renderFilesTable(filesList);
+            } catch (err) {
+                showAlert("Error fetching file repository: " + err.message, true);
+            }
+        }
+
+        // Render Dashboard Metrics
+        function renderMetrics() {
+            let zipApk = 0;
+            let verifiedHash = 0;
+            let totalDownloads = 0;
+
+            filesList.forEach(f => {
+                if (f.extension === 'zip' || f.extension === 'apk') zipApk++;
+                if (f.checksum && f.checksum.trim().length > 0) verifiedHash++;
+                totalDownloads += (f.downloadCount || 0);
+            });
+
+            document.getElementById('stat-total-files').textContent = filesList.length;
+            document.getElementById('stat-apk-zip-count').textContent = zipApk;
+            document.getElementById('stat-verified-checksum').textContent = verifiedHash;
+            document.getElementById('stat-total-file-downloads').textContent = totalDownloads.toLocaleString();
+        }
+
+        // Render Files Table
+        function renderFilesTable(data) {
+            const tbody = document.getElementById('files-tbody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No matching files found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(file => {
+                const shortHash = file.checksum ? `${file.checksum.substring(0, 10)}...` : 'N/A';
+                return `
+                    <tr>
+                        <td>
+                            <strong>${escapeHtml(file.title || file.fileName)}</strong><br>
+                            <span class="text-muted-sm">${escapeHtml(file.fileName)}</span>
+                            ${file.fileUrl ? `<a href="${escapeHtml(file.fileUrl)}" target="_blank" rel="noopener" class="external-link-icon" title="Direct File Link"> ↗</a>` : ''}
+                        </td>
+                        <td><span class="badge">.${escapeHtml(file.extension || 'bin')}</span></td>
+                        <td>${escapeHtml(file.fileSize || 'N/A')}</td>
+                        <td><code class="hash-code" title="${escapeHtml(file.checksum || '')}">${escapeHtml(shortHash)}</code></td>
+                        <td><span class="status-dot ${file.status === 'active' ? 'published' : 'draft'}"></span> ${file.status || 'active'}</td>
+                        <td>${file.downloadCount || 0}</td>
+                        <td class="text-right">
+                            <button class="btn btn-outline btn-sm" onclick="editFile('${file.id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteFile('${file.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Search and Extension/Status Filtering
+        window.filterFiles = function() {
+            const query = document.getElementById('file-search-input').value.toLowerCase();
+            const ext = document.getElementById('file-filter-ext').value;
+            const status = document.getElementById('file-filter-status').value;
+
+            const filtered = filesList.filter(f => {
+                const matchesQuery = (f.title && f.title.toLowerCase().includes(query)) || 
+                                     (f.fileName && f.fileName.toLowerCase().includes(query)) ||
+                                     (f.checksum && f.checksum.toLowerCase().includes(query));
+                const matchesExt = ext === 'all' || f.extension === ext;
+                const matchesStatus = status === 'all' || (f.status || 'active') === status;
+                return matchesQuery && matchesExt && matchesStatus;
+            });
+
+            renderFilesTable(filtered);
+        };
+
+        // Modal Controls
+        window.openFileModal = function() {
+            document.getElementById('form-file-modal').reset();
+            document.getElementById('modal-file-id').value = '';
+            document.getElementById('modal-title').textContent = "Register File Record";
+            document.getElementById('modal-file').classList.remove('hidden');
+        };
+
+        window.closeFileModal = function() {
+            document.getElementById('modal-file').classList.add('hidden');
+        };
+
+        window.editFile = function(id) {
+            const file = filesList.find(f => f.id === id);
+            if (!file) return;
+
+            document.getElementById('modal-file-id').value = file.id;
+            document.getElementById('modal-file-title').value = file.title || '';
+            document.getElementById('modal-file-name').value = file.fileName || '';
+            document.getElementById('modal-file-ext').value = file.extension || 'zip';
+            document.getElementById('modal-file-size').value = file.fileSize || '';
+            document.getElementById('modal-file-url').value = file.fileUrl || '';
+            document.getElementById('modal-file-hash').value = file.checksum || '';
+            document.getElementById('modal-file-status').value = file.status || 'active';
+
+            document.getElementById('modal-title').textContent = "Edit File Entry";
+            document.getElementById('modal-file').classList.remove('hidden');
+        };
+
+        // Modal Form Submit
+        document.getElementById('form-file-modal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('modal-file-id').value;
+            const data = {
+                title: document.getElementById('modal-file-title').value.trim(),
+                fileName: document.getElementById('modal-file-name').value.trim(),
+                extension: document.getElementById('modal-file-ext').value,
+                fileSize: document.getElementById('modal-file-size').value.trim(),
+                fileUrl: document.getElementById('modal-file-url').value.trim(),
+                checksum: document.getElementById('modal-file-hash').value.trim(),
+                status: document.getElementById('modal-file-status').value,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "files", id), data);
+                    showAlert("File record updated successfully!");
+                } else {
+                    data.downloadCount = 0;
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "files"), data);
+                    showAlert("File record registered successfully!");
+                }
+                closeFileModal();
+                await loadFileManager();
+            } catch (err) {
+                showAlert("Error saving file record: " + err.message, true);
+            }
+        });
+
+        // Delete File Entry
+        window.deleteFile = async function(id) {
+            if (!confirm("Are you sure you want to delete this file record from the database?")) return;
+
+            try {
+                await deleteDoc(doc(db, "files", id));
+                showAlert("File record deleted successfully.");
+                await loadFileManager();
+            } catch (err) {
+                showAlert("Delete failed: " + err.message, true);
+            }
+        };
+
+        // Helper: Alert Notification
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.textContent = msg;
+            alertBox.className = `alert-box ${isError ? 'alert-danger' : 'alert-success'} mb-4`;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+
+        // Helper: HTML Escaper
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

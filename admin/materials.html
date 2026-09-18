@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Materials - Aura Resource Platform Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark admin-body">
+
+    <!-- Header Navigation -->
+    <header class="header-glass navbar admin-navbar">
+        <div class="container nav-wrapper">
+            <a href="../index.html" class="brand-logo">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+                <span class="badge badge-primary ml-2">ADMIN</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="resources.html" class="nav-link">Categories</a>
+                <a href="items.html" class="nav-link">Releases</a>
+                <a href="materials.html" class="nav-link active">Materials</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="user-email-display" id="user-email">auth@aura.internal</span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main-padding">
+        <!-- Breadcrumbs & Header -->
+        <div class="admin-page-header mb-4">
+            <div>
+                <nav class="breadcrumb-nav mb-2" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Admin</a></li>
+                        <li class="breadcrumb-item active">Material Management</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Digital Collateral & Materials</h1>
+                <p class="text-secondary">Attach documentation, source packages, video guides, and asset files to platform releases.</p>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-glow" onclick="openMaterialModal()">
+                    <span>+ New Material</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="admin-alert" class="alert-box hidden mb-4" role="alert"></div>
+
+        <!-- Metric Cards Grid -->
+        <div class="stats-counter-grid mb-4">
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📚</div>
+                <div class="stat-number" id="stat-total-mat">0</div>
+                <div class="stat-heading">Total Materials</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📄</div>
+                <div class="stat-number" id="stat-docs-mat">0</div>
+                <div class="stat-heading">Docs & Guides</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📦</div>
+                <div class="stat-number" id="stat-assets-mat">0</div>
+                <div class="stat-heading">Asset Archives</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number" id="stat-total-access">0</div>
+                <div class="stat-heading">Total Accesses</div>
+            </div>
+        </div>
+
+        <!-- Controls / Search Toolbar -->
+        <div class="glass-card p-3 mb-4 flex-between-toolbar">
+            <div class="search-input-wrapper">
+                <input type="text" id="mat-search-input" class="form-control" placeholder="Search materials by title or format..." oninput="filterMaterials()">
+            </div>
+            <div class="filter-controls">
+                <select id="mat-filter-type" class="form-control" onchange="filterMaterials()">
+                    <option value="all">All File Types</option>
+                    <option value="pdf">PDF Document</option>
+                    <option value="archive">Zip / Code Archive</option>
+                    <option value="video">Video Walkthrough</option>
+                    <option value="asset">Design & Media Asset</option>
+                </select>
+                <select id="mat-filter-status" class="form-control" onchange="filterMaterials()">
+                    <option value="all">All Statuses</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Materials Data Table -->
+        <div class="glass-card p-4">
+            <div class="table-responsive">
+                <table class="table-glass">
+                    <thead>
+                        <tr>
+                            <th>Material Name</th>
+                            <th>Type</th>
+                            <th>Linked Release</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Accesses</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="materials-tbody">
+                        <tr>
+                            <td colspan="7" class="text-center">Loading material repository...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create / Edit Material Modal Dialog -->
+    <div id="modal-material" class="modal-backdrop hidden">
+        <div class="glass-card modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Attach Material Asset</h3>
+                <button class="modal-close-btn" onclick="closeMaterialModal()">✕</button>
+            </div>
+            <form id="form-material-modal">
+                <input type="hidden" id="modal-mat-id">
+                <div class="modal-body admin-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Material Title *</label>
+                        <input type="text" id="modal-mat-title" class="form-control" placeholder="e.g. Developer Integration Specs" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Asset Format / Type *</label>
+                        <select id="modal-mat-type" class="form-control" required>
+                            <option value="pdf">📄 PDF Document</option>
+                            <option value="archive">📦 Zip / Source Archive</option>
+                            <option value="video">🎥 Video Guide / Tutorial</option>
+                            <option value="asset">🎨 Design & Media Asset</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Linked Release *</label>
+                        <select id="modal-mat-item" class="form-control" required>
+                            <option value="">Select Target Release...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">File Size (Approx.)</label>
+                        <input type="text" id="modal-mat-size" class="form-control" placeholder="e.g. 12.4 MB">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Storage / Mirror URL *</label>
+                        <input type="url" id="modal-mat-url" class="form-control" placeholder="https://cdn.example.com/assets/doc.pdf" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Summary / Instructions</label>
+                        <textarea id="modal-mat-desc" class="form-control" rows="3" placeholder="Brief summary of what this asset file contains..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="modal-mat-status" class="form-control">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeMaterialModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-glow" id="btn-save-modal">Save Material</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let materialsList = [];
+        let itemsList = [];
+
+        // Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('user-email').textContent = user.email;
+                loadMaterialManager();
+            }
+        });
+
+        // Sign Out
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        // Load Global Data
+        async function loadMaterialManager() {
+            try {
+                // Fetch Site Settings
+                const setSnap = await getDoc(doc(db, "settings", "global"));
+                if (setSnap.exists() && setSnap.data().siteName) {
+                    document.getElementById('brand-name').textContent = setSnap.data().siteName;
+                }
+
+                // Fetch Parent Items/Releases for Link Select
+                const itemSnap = await getDocs(collection(db, "items"));
+                itemsList = itemSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                populateReleaseDropdown();
+
+                // Fetch Materials
+                const matSnap = await getDocs(collection(db, "materials"));
+                materialsList = matSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                renderMetrics();
+                renderMaterialsTable(materialsList);
+            } catch (err) {
+                showAlert("Error fetching materials repository: " + err.message, true);
+            }
+        }
+
+        // Populate Release Dropdown
+        function populateReleaseDropdown() {
+            const modalSelect = document.getElementById('modal-mat-item');
+            modalSelect.innerHTML = '<option value="">Select Target Release...</option>';
+
+            itemsList.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.id;
+                opt.textContent = `🚀 ${item.title} (${item.version || 'v1.0'})`;
+                modalSelect.appendChild(opt);
+            });
+        }
+
+        // Render Dashboard Metrics
+        function renderMetrics() {
+            let docsCount = 0;
+            let archiveCount = 0;
+            let totalAccess = 0;
+
+            materialsList.forEach(m => {
+                if (m.type === 'pdf') docsCount++;
+                if (m.type === 'archive' || m.type === 'asset') archiveCount++;
+                totalAccess += (m.accessCount || 0);
+            });
+
+            document.getElementById('stat-total-mat').textContent = materialsList.length;
+            document.getElementById('stat-docs-mat').textContent = docsCount;
+            document.getElementById('stat-assets-mat').textContent = archiveCount;
+            document.getElementById('stat-total-access').textContent = totalAccess.toLocaleString();
+        }
+
+        // Helper: Format Icon Label
+        function getFormatBadge(type) {
+            switch(type) {
+                case 'pdf': return '📄 PDF';
+                case 'archive': return '📦 Archive';
+                case 'video': return '🎥 Video';
+                case 'asset': return '🎨 Asset';
+                default: return '📎 Document';
+            }
+        }
+
+        // Render Materials Table
+        function renderMaterialsTable(data) {
+            const tbody = document.getElementById('materials-tbody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No matching materials found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(mat => {
+                const parentItem = itemsList.find(i => i.id === mat.itemId);
+                return `
+                    <tr>
+                        <td>
+                            <strong>${escapeHtml(mat.title)}</strong>
+                            ${mat.fileUrl ? `<a href="${escapeHtml(mat.fileUrl)}" target="_blank" rel="noopener" class="external-link-icon" title="Open File Direct"> ↗</a>` : ''}
+                        </td>
+                        <td><span class="badge">${getFormatBadge(mat.type)}</span></td>
+                        <td>${parentItem ? `🚀 ${escapeHtml(parentItem.title)}` : '<span class="text-muted-sm">Unlinked</span>'}</td>
+                        <td>${escapeHtml(mat.fileSize || 'N/A')}</td>
+                        <td><span class="status-dot ${mat.status === 'published' ? 'published' : 'draft'}"></span> ${mat.status}</td>
+                        <td>${mat.accessCount || 0}</td>
+                        <td class="text-right">
+                            <button class="btn btn-outline btn-sm" onclick="editMaterial('${mat.id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteMaterial('${mat.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Search and Type/Status Filtering
+        window.filterMaterials = function() {
+            const query = document.getElementById('mat-search-input').value.toLowerCase();
+            const type = document.getElementById('mat-filter-type').value;
+            const status = document.getElementById('mat-filter-status').value;
+
+            const filtered = materialsList.filter(m => {
+                const matchesQuery = m.title.toLowerCase().includes(query) || (m.description && m.description.toLowerCase().includes(query));
+                const matchesType = type === 'all' || m.type === type;
+                const matchesStatus = status === 'all' || m.status === status;
+                return matchesQuery && matchesType && matchesStatus;
+            });
+
+            renderMaterialsTable(filtered);
+        };
+
+        // Modal Controls
+        window.openMaterialModal = function() {
+            document.getElementById('form-material-modal').reset();
+            document.getElementById('modal-mat-id').value = '';
+            document.getElementById('modal-title').textContent = "Attach Material Asset";
+            document.getElementById('modal-material').classList.remove('hidden');
+        };
+
+        window.closeMaterialModal = function() {
+            document.getElementById('modal-material').classList.add('hidden');
+        };
+
+        window.editMaterial = function(id) {
+            const mat = materialsList.find(m => m.id === id);
+            if (!mat) return;
+
+            document.getElementById('modal-mat-id').value = mat.id;
+            document.getElementById('modal-mat-title').value = mat.title;
+            document.getElementById('modal-mat-type').value = mat.type || 'pdf';
+            document.getElementById('modal-mat-item').value = mat.itemId || '';
+            document.getElementById('modal-mat-size').value = mat.fileSize || '';
+            document.getElementById('modal-mat-url').value = mat.fileUrl || '';
+            document.getElementById('modal-mat-desc').value = mat.description || '';
+            document.getElementById('modal-mat-status').value = mat.status || 'published';
+
+            document.getElementById('modal-title').textContent = "Edit Material Asset";
+            document.getElementById('modal-material').classList.remove('hidden');
+        };
+
+        // Modal Form Submit
+        document.getElementById('form-material-modal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('modal-mat-id').value;
+            const data = {
+                title: document.getElementById('modal-mat-title').value.trim(),
+                type: document.getElementById('modal-mat-type').value,
+                itemId: document.getElementById('modal-mat-item').value,
+                fileSize: document.getElementById('modal-mat-size').value.trim(),
+                fileUrl: document.getElementById('modal-mat-url').value.trim(),
+                description: document.getElementById('modal-mat-desc').value.trim(),
+                status: document.getElementById('modal-mat-status').value,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "materials", id), data);
+                    showAlert("Material updated successfully!");
+                } else {
+                    data.accessCount = 0;
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "materials"), data);
+                    showAlert("Material published successfully!");
+                }
+                closeMaterialModal();
+                await loadMaterialManager();
+            } catch (err) {
+                showAlert("Error saving material: " + err.message, true);
+            }
+        });
+
+        // Delete Material
+        window.deleteMaterial = async function(id) {
+            if (!confirm("Are you sure you want to delete this material asset?")) return;
+
+            try {
+                await deleteDoc(doc(db, "materials", id));
+                showAlert("Material asset deleted successfully.");
+                await loadMaterialManager();
+            } catch (err) {
+                showAlert("Delete failed: " + err.message, true);
+            }
+        };
+
+        // Helper: Alert Notification
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.textContent = msg;
+            alertBox.className = `alert-box ${isError ? 'alert-danger' : 'alert-success'} mb-4`;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+
+        // Helper: HTML Escaper
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics & Telemetry - Aura Resource Platform Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark admin-body">
+
+    <!-- Header Navigation -->
+    <header class="header-glass navbar admin-navbar">
+        <div class="container nav-wrapper">
+            <a href="../index.html" class="brand-logo">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+                <span class="badge badge-primary ml-2">ADMIN</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="resources.html" class="nav-link">Categories</a>
+                <a href="items.html" class="nav-link">Releases</a>
+                <a href="materials.html" class="nav-link">Materials</a>
+                <a href="files.html" class="nav-link">Files</a>
+                <a href="analytics.html" class="nav-link active">Analytics</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="user-email-display" id="user-email">auth@aura.internal</span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main-padding">
+        <!-- Breadcrumbs & Header -->
+        <div class="admin-page-header mb-4">
+            <div>
+                <nav class="breadcrumb-nav mb-2" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Admin</a></li>
+                        <li class="breadcrumb-item active">Platform Analytics</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Analytics & Usage Telemetry</h1>
+                <p class="text-secondary">Track user engagement, download traffic, top-performing releases, and distribution metrics.</p>
+            </div>
+            <div>
+                <select id="analytics-timeframe" class="form-control" onchange="loadAnalyticsData()">
+                    <option value="7d">Last 7 Days</option>
+                    <option value="30d" selected>Last 30 Days</option>
+                    <option value="90d">Last 90 Days</option>
+                    <option value="all">All Time</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="admin-alert" class="alert-box hidden mb-4" role="alert"></div>
+
+        <!-- Stat Metric Overview Cards -->
+        <div class="stats-counter-grid mb-4">
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-number" id="stat-total-impressions">0</div>
+                <div class="stat-heading">Total Page Views</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📥</div>
+                <div class="stat-number" id="stat-total-downloads">0</div>
+                <div class="stat-heading">Total Binary Downloads</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📈</div>
+                <div class="stat-number" id="stat-conversion-rate">0.0%</div>
+                <div class="stat-heading">Download Ratio</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-number" id="stat-est-bandwidth">0 GB</div>
+                <div class="stat-heading">Est. Egress Bandwidth</div>
+            </div>
+        </div>
+
+        <!-- Analytics Visualizations Grid -->
+        <div class="admin-grid-2col mb-4">
+            <!-- Category Performance Breakdown -->
+            <div class="glass-card p-4">
+                <h3 class="mb-3">Category Distribution</h3>
+                <p class="text-secondary mb-4">Aggregate views and downloads categorized by asset classification.</p>
+                <div id="category-analytics-bars" class="analytics-bar-list">
+                    <div class="text-center text-muted p-3">Calculating metrics...</div>
+                </div>
+            </div>
+
+            <!-- Top Downloaded Assets -->
+            <div class="glass-card p-4">
+                <h3 class="mb-3">Top Downloaded Releases</h3>
+                <p class="text-secondary mb-4">Highest performing software releases ranked by direct user grabs.</p>
+                <div class="table-responsive">
+                    <table class="table-glass table-sm">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Release Title</th>
+                                <th>Version</th>
+                                <th class="text-right">Downloads</th>
+                            </tr>
+                        </thead>
+                        <tbody id="top-releases-tbody">
+                            <tr>
+                                <td colspan="4" class="text-center">Loading performance telemetry...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storage & Mirror File Distribution -->
+        <div class="glass-card p-4 mb-4">
+            <h3 class="mb-3">Direct Binary & File Performance</h3>
+            <p class="text-secondary mb-3">Bandwidth consumption and traffic logs across mirror assets.</p>
+            <div class="table-responsive">
+                <table class="table-glass">
+                    <thead>
+                        <tr>
+                            <th>File Mirror</th>
+                            <th>Format</th>
+                            <th>File Size</th>
+                            <th>Downloads</th>
+                            <th>Est. Total Traffic</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="files-analytics-tbody">
+                        <tr>
+                            <td colspan="6" class="text-center">Analyzing file distribution logs...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getFirestore, collection, getDocs, doc, getDoc 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let categories = [];
+        let releases = [];
+        let files = [];
+
+        // Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('user-email').textContent = user.email;
+                loadAnalyticsData();
+            }
+        });
+
+        // Sign Out
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        // Fetch Data & Generate Telemetry
+        window.loadAnalyticsData = async function() {
+            try {
+                // Fetch Brand Settings
+                const setSnap = await getDoc(doc(db, "settings", "global"));
+                if (setSnap.exists() && setSnap.data().siteName) {
+                    document.getElementById('brand-name').textContent = setSnap.data().siteName;
+                }
+
+                // Fetch Categories, Items (Releases), and Files
+                const [catSnap, itemSnap, fileSnap] = await Promise.all([
+                    getDocs(collection(db, "resources")),
+                    getDocs(collection(db, "items")),
+                    getDocs(collection(db, "files"))
+                ]);
+
+                categories = catSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                releases = itemSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+                files = fileSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                computeGlobalStats();
+                renderCategoryAnalytics();
+                renderTopReleases();
+                renderFilesAnalytics();
+            } catch (err) {
+                showAlert("Error loading analytics telemetry: " + err.message, true);
+            }
+        };
+
+        // Calculate Overview Cards
+        function computeGlobalStats() {
+            let totalViews = 0;
+            let totalDownloads = 0;
+
+            categories.forEach(c => totalViews += (c.viewCount || 0));
+            releases.forEach(r => {
+                totalViews += (r.viewCount || 0);
+                totalDownloads += (r.downloadCount || 0);
+            });
+
+            const conversion = totalViews > 0 ? ((totalDownloads / totalViews) * 100).toFixed(1) : 0;
+
+            // Estimate Bandwidth (Approx. 25MB per download average if unspecified)
+            let totalMegabytes = 0;
+            files.forEach(f => {
+                const sizeMb = parseFloat(f.fileSize) || 25;
+                totalMegabytes += (sizeMb * (f.downloadCount || 0));
+            });
+            const totalGigabytes = (totalMegabytes / 1024).toFixed(2);
+
+            document.getElementById('stat-total-impressions').textContent = totalViews.toLocaleString();
+            document.getElementById('stat-total-downloads').textContent = totalDownloads.toLocaleString();
+            document.getElementById('stat-conversion-rate').textContent = `${conversion}%`;
+            document.getElementById('stat-est-bandwidth').textContent = `${totalGigabytes} GB`;
+        }
+
+        // Render Category Progress Bars
+        function renderCategoryAnalytics() {
+            const container = document.getElementById('category-analytics-bars');
+            if (categories.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted p-3">No categories found.</div>';
+                return;
+            }
+
+            const maxViews = Math.max(...categories.map(c => c.viewCount || 0), 1);
+
+            container.innerHTML = categories.map(cat => {
+                const views = cat.viewCount || 0;
+                const percentage = Math.min(Math.round((views / maxViews) * 100), 100);
+                return `
+                    <div class="analytics-bar-item mb-3">
+                        <div class="flex-between mb-1">
+                            <span>${cat.icon || '📁'} <strong>${escapeHtml(cat.title)}</strong></span>
+                            <span class="text-muted-sm">${views.toLocaleString()} views</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Top Release Table
+        function renderTopReleases() {
+            const tbody = document.getElementById('top-releases-tbody');
+            if (releases.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No release performance data available.</td></tr>';
+                return;
+            }
+
+            const sorted = [...releases].sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0)).slice(0, 5);
+
+            tbody.innerHTML = sorted.map((item, index) => `
+                <tr>
+                    <td><strong>#${index + 1}</strong></td>
+                    <td><strong>${escapeHtml(item.title)}</strong></td>
+                    <td><span class="badge">${escapeHtml(item.version || 'v1.0')}</span></td>
+                    <td class="text-right"><strong>${(item.downloadCount || 0).toLocaleString()}</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // Render Files Analytics Table
+        function renderFilesAnalytics() {
+            const tbody = document.getElementById('files-analytics-tbody');
+            if (files.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No file telemetry logs found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = files.map(file => {
+                const count = file.downloadCount || 0;
+                const sizeMb = parseFloat(file.fileSize) || 0;
+                const trafficGb = ((sizeMb * count) / 1024).toFixed(2);
+
+                return `
+                    <tr>
+                        <td><strong>${escapeHtml(file.title || file.fileName)}</strong></td>
+                        <td><span class="badge">.${escapeHtml(file.extension || 'bin')}</span></td>
+                        <td>${escapeHtml(file.fileSize || 'N/A')}</td>
+                        <td>${count.toLocaleString()}</td>
+                        <td>${trafficGb} GB</td>
+                        <td><span class="status-dot ${file.status === 'active' ? 'published' : 'draft'}"></span> ${file.status || 'active'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Helper: Alert Notification
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.textContent = msg;
+            alertBox.className = `alert-box ${isError ? 'alert-danger' : 'alert-success'} mb-4`;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+
+        // Helper: HTML Escaper
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

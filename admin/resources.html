@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Categories - Aura Resource Platform Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark admin-body">
+
+    <!-- Header Navigation -->
+    <header class="header-glass navbar admin-navbar">
+        <div class="container nav-wrapper">
+            <a href="../index.html" class="brand-logo">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+                <span class="badge badge-primary ml-2">ADMIN</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="resources.html" class="nav-link active">Categories</a>
+                <a href="items.html" class="nav-link">Releases</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="user-email-display" id="user-email">auth@aura.internal</span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Sign Out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container page-main-padding">
+        <!-- Breadcrumbs & Header -->
+        <div class="admin-page-header mb-4">
+            <div>
+                <nav class="breadcrumb-nav mb-2" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a href="dashboard.html">Admin</a></li>
+                        <li class="breadcrumb-item active">Category Management</li>
+                    </ol>
+                </nav>
+                <h1 class="page-title">Resource Categories</h1>
+                <p class="text-secondary">Create, structure, and monitor system asset categories across your repository.</p>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-glow" onclick="openCategoryModal()">
+                    <span>+ New Category</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="admin-alert" class="alert-box hidden mb-4" role="alert"></div>
+
+        <!-- Metric Cards Grid -->
+        <div class="stats-counter-grid mb-4">
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📁</div>
+                <div class="stat-number" id="stat-total-cat">0</div>
+                <div class="stat-heading">Total Categories</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">✅</div>
+                <div class="stat-number" id="stat-pub-cat">0</div>
+                <div class="stat-heading">Published</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">📝</div>
+                <div class="stat-number" id="stat-draft-cat">0</div>
+                <div class="stat-heading">Drafts</div>
+            </div>
+            <div class="glass-card stat-card text-center">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-number" id="stat-total-views">0</div>
+                <div class="stat-heading">Category Views</div>
+            </div>
+        </div>
+
+        <!-- Controls / Search Toolbar -->
+        <div class="glass-card p-3 mb-4 flex-between-toolbar">
+            <div class="search-input-wrapper">
+                <input type="text" id="cat-search-input" class="form-control" placeholder="Search categories by title..." oninput="filterCategories()">
+            </div>
+            <div class="filter-controls">
+                <select id="cat-filter-status" class="form-control" onchange="filterCategories()">
+                    <option value="all">All Statuses</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Categories Data Table -->
+        <div class="glass-card p-4">
+            <div class="table-responsive">
+                <table class="table-glass">
+                    <thead>
+                        <tr>
+                            <th>Icon</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Linked Items</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categories-tbody">
+                        <tr>
+                            <td colspan="7" class="text-center">Loading categories...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Create / Edit Category Modal Dialog -->
+    <div id="modal-category" class="modal-backdrop hidden">
+        <div class="glass-card modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">New Category</h3>
+                <button class="modal-close-btn" onclick="closeCategoryModal()">✕</button>
+            </div>
+            <form id="form-category-modal">
+                <input type="hidden" id="modal-cat-id">
+                <div class="modal-body admin-form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category Title *</label>
+                        <input type="text" id="modal-cat-title" class="form-control" placeholder="e.g. Developer Tools" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Icon / Emoji *</label>
+                        <input type="text" id="modal-cat-icon" class="form-control" placeholder="⚡" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="form-label">Description</label>
+                        <textarea id="modal-cat-desc" class="form-control" rows="3" placeholder="Explain the resources grouped in this category..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="modal-cat-status" class="form-control">
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closeCategoryModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-glow" id="btn-save-modal">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { 
+            getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let categoriesList = [];
+        let itemsList = [];
+
+        // Auth Guard
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById('user-email').textContent = user.email;
+                loadCategoryManager();
+            }
+        });
+
+        // Sign Out
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "index.html");
+        });
+
+        // Load Global Data
+        async function loadCategoryManager() {
+            try {
+                // Fetch Settings for Brand Name
+                const setSnap = await getDoc(doc(db, "settings", "global"));
+                if (setSnap.exists() && setSnap.data().siteName) {
+                    document.getElementById('brand-name').textContent = setSnap.data().siteName;
+                }
+
+                // Fetch Releases for linking stats
+                const itemSnap = await getDocs(collection(db, "items"));
+                itemsList = itemSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                // Fetch Categories
+                const catSnap = await getDocs(collection(db, "resources"));
+                categoriesList = catSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                renderMetrics();
+                renderCategoriesTable(categoriesList);
+            } catch (err) {
+                showAlert("Error fetching categories: " + err.message, true);
+            }
+        }
+
+        // Render Dashboard Analytics
+        function renderMetrics() {
+            let pub = 0;
+            let draft = 0;
+            let views = 0;
+
+            categoriesList.forEach(c => {
+                if (c.status === 'published') pub++;
+                else draft++;
+                views += (c.viewCount || 0);
+            });
+
+            document.getElementById('stat-total-cat').textContent = categoriesList.length;
+            document.getElementById('stat-pub-cat').textContent = pub;
+            document.getElementById('stat-draft-cat').textContent = draft;
+            document.getElementById('stat-total-views').textContent = views.toLocaleString();
+        }
+
+        // Render Categories Table
+        function renderCategoriesTable(data) {
+            const tbody = document.getElementById('categories-tbody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No matching categories found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(cat => {
+                const linkedCount = itemsList.filter(i => i.categoryId === cat.id).length;
+                return `
+                    <tr>
+                        <td><span class="stat-icon-sm">${cat.icon || '📁'}</span></td>
+                        <td><strong>${escapeHtml(cat.title)}</strong></td>
+                        <td><span class="text-muted-sm">${escapeHtml(cat.description || 'No description provided')}</span></td>
+                        <td><span class="badge">${linkedCount} Items</span></td>
+                        <td><span class="status-dot ${cat.status === 'published' ? 'published' : 'draft'}"></span> ${cat.status}</td>
+                        <td>${cat.viewCount || 0}</td>
+                        <td class="text-right">
+                            <button class="btn btn-outline btn-sm" onclick="editCategory('${cat.id}')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteCategory('${cat.id}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Search and Status Filtering
+        window.filterCategories = function() {
+            const query = document.getElementById('cat-search-input').value.toLowerCase();
+            const status = document.getElementById('cat-filter-status').value;
+
+            const filtered = categoriesList.filter(c => {
+                const matchesQuery = c.title.toLowerCase().includes(query) || (c.description && c.description.toLowerCase().includes(query));
+                const matchesStatus = status === 'all' || c.status === status;
+                return matchesQuery && matchesStatus;
+            });
+
+            renderCategoriesTable(filtered);
+        };
+
+        // Modal Controls
+        window.openCategoryModal = function() {
+            document.getElementById('form-category-modal').reset();
+            document.getElementById('modal-cat-id').value = '';
+            document.getElementById('modal-title').textContent = "New Category";
+            document.getElementById('modal-category').classList.remove('hidden');
+        };
+
+        window.closeCategoryModal = function() {
+            document.getElementById('modal-category').classList.add('hidden');
+        };
+
+        window.editCategory = function(id) {
+            const cat = categoriesList.find(c => c.id === id);
+            if (!cat) return;
+
+            document.getElementById('modal-cat-id').value = cat.id;
+            document.getElementById('modal-cat-title').value = cat.title;
+            document.getElementById('modal-cat-icon').value = cat.icon || '';
+            document.getElementById('modal-cat-desc').value = cat.description || '';
+            document.getElementById('modal-cat-status').value = cat.status || 'published';
+
+            document.getElementById('modal-title').textContent = "Edit Category";
+            document.getElementById('modal-category').classList.remove('hidden');
+        };
+
+        // Modal Form Submit
+        document.getElementById('form-category-modal').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('modal-cat-id').value;
+            const data = {
+                title: document.getElementById('modal-cat-title').value.trim(),
+                icon: document.getElementById('modal-cat-icon').value.trim(),
+                description: document.getElementById('modal-cat-desc').value.trim(),
+                status: document.getElementById('modal-cat-status').value,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "resources", id), data);
+                    showAlert("Category updated successfully!");
+                } else {
+                    data.viewCount = 0;
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "resources"), data);
+                    showAlert("Category created successfully!");
+                }
+                closeCategoryModal();
+                await loadCategoryManager();
+            } catch (err) {
+                showAlert("Error saving category: " + err.message, true);
+            }
+        });
+
+        // Delete Category
+        window.deleteCategory = async function(id) {
+            const linked = itemsList.filter(i => i.categoryId === id).length;
+            if (linked > 0) {
+                if (!confirm(`Warning: This category contains ${linked} linked releases. Deleting it will leave those releases uncategorized. Continue?`)) return;
+            } else {
+                if (!confirm("Are you sure you want to delete this category?")) return;
+            }
+
+            try {
+                await deleteDoc(doc(db, "resources", id));
+                showAlert("Category deleted successfully.");
+                await loadCategoryManager();
+            } catch (err) {
+                showAlert("Delete failed: " + err.message, true);
+            }
+        };
+
+        // Helper: Alert Notification
+        function showAlert(msg, isError = false) {
+            const alertBox = document.getElementById('admin-alert');
+            alertBox.textContent = msg;
+            alertBox.className = `alert-box ${isError ? 'alert-danger' : 'alert-success'} mb-4`;
+            alertBox.classList.remove('hidden');
+            setTimeout(() => alertBox.classList.add('hidden'), 4000);
+        }
+
+        // Helper: HTML Escaper
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
