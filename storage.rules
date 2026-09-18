@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper: Check if request is from an authenticated admin user
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Binary Download Files & Release Archives (Public download access, Admin upload/delete)
+    match /files/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Material Assets, Previews, & Documentation Media (Public view access, Admin upload/delete)
+    match /materials/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Public Site Assets, Logos, and Thumbnails
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Default Fallback: Restrict all unmentioned paths to authenticated admin users
+    match /{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

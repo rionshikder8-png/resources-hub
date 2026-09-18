@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Resource Category - Aura Resource Platform</title>
+    <meta name="description" id="page-description" content="View items, releases, and versions within this resource category.">
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" id="og-title" content="Resource Category - Aura Resource Platform">
+    <meta property="og:description" id="og-description" content="Explore items, downloads, and documentation for this resource category.">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Single Global CSS File -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark">
+
+    <!-- Header / Navigation -->
+    <header class="header-glass navbar" id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="brand-logo" id="brand-logo-container">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="resources.html" class="nav-link active">Resources</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="search.html" class="btn-icon" aria-label="Search Platform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+                <a href="admin/index.html" class="btn btn-outline btn-sm">Admin Access</a>
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="page-main-padding">
+        <!-- Dynamic Breadcrumb Navigation -->
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="resources.html">Resources</a></li>
+                    <li class="breadcrumb-item active" id="breadcrumb-current">Category</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Error Container (Missing/Invalid Category) -->
+        <div id="category-error-state" class="container hidden">
+            <div class="glass-card error-card text-center">
+                <div class="error-icon">⚠️</div>
+                <h2 id="error-title">Resource Category Not Found</h2>
+                <p id="error-message">The requested category could not be found or has been unpublished by the administrator.</p>
+                <a href="resources.html" class="btn btn-primary btn-glow mt-4">Browse All Resources</a>
+            </div>
+        </div>
+
+        <!-- Category Hero Detail Header -->
+        <section id="category-hero" class="category-hero-section">
+            <div class="container">
+                <!-- Skeleton Header -->
+                <div id="category-header-skeleton" class="glass-card skeleton-header-card">
+                    <div class="skeleton skeleton-avatar"></div>
+                    <div class="skeleton-header-lines">
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text-block"></div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Render Header -->
+                <div id="category-header-content" class="glass-card category-header-card hidden">
+                    <div class="category-banner-backdrop"></div>
+                    <div class="category-header-grid">
+                        <div class="category-icon-large" id="category-icon-box">📦</div>
+                        <div class="category-main-meta">
+                            <div class="category-pills">
+                                <span class="pill-tag" id="category-status-pill"><span class="pulse-dot"></span> Active Category</span>
+                                <span class="badge-glow" id="category-featured-badge" style="display:none;">Featured</span>
+                            </div>
+                            <h1 class="category-title" id="category-name">Loading Category...</h1>
+                            <p class="category-description" id="category-description"></p>
+
+                            <div class="category-stats-row">
+                                <span class="stat-badge">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    <span id="category-views">0</span> Views
+                                </span>
+                                <span class="stat-badge">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                    <span id="category-item-count">0</span> Items / Versions
+                                </span>
+                            </div>
+
+                            <div class="category-tags-list" id="category-tags"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Category Items / Versions Section -->
+        <section id="category-items-section" class="section-padding">
+            <div class="container">
+                <div class="section-header">
+                    <div>
+                        <span class="section-badge">Releases & Versions</span>
+                        <h2 class="section-title">Available Items</h2>
+                        <p class="section-desc">Explore builds, version histories, documentation, and main files in this repository.</p>
+                    </div>
+                </div>
+
+                <!-- Inline Search & Filter Controls -->
+                <div class="catalog-controls-bar glass-card mb-4">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="item-search-input" class="form-input" placeholder="Search items or version numbers in this category...">
+                        <button type="button" id="clear-item-search" class="clear-btn hidden" aria-label="Clear search">&times;</button>
+                    </div>
+
+                    <div class="sort-select-wrapper">
+                        <label for="item-sort-select" class="sort-label">Sort Items:</label>
+                        <select id="item-sort-select" class="form-select">
+                            <option value="newest">Latest Release First</option>
+                            <option value="version">Version Number</option>
+                            <option value="downloads">Most Downloaded</option>
+                            <option value="alphabetical">Title (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Skeleton Items Grid -->
+                <div id="items-skeleton-grid" class="cards-grid">
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                </div>
+
+                <!-- Dynamic Items Grid -->
+                <div id="items-grid" class="cards-grid hidden"></div>
+
+                <!-- Empty State -->
+                <div id="items-empty" class="empty-state hidden">
+                    <div class="empty-icon">📂</div>
+                    <h3>No items available in this category</h3>
+                    <p>There are currently no published versions or items matching your current criteria.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <div class="logo-icon-3d">
+                        <span class="core-dot"></span>
+                    </div>
+                    <span class="brand-name" id="footer-brand-name">AURA</span>
+                </div>
+                <p id="footer-description" class="footer-desc">
+                    A dynamic, next-generation digital resource archive and deployment platform.
+                </p>
+                <div id="footer-socials" class="social-links-row"></div>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="resources.html">All Resources</a></li>
+                    <li><a href="search.html">Instant Search</a></li>
+                    <li><a href="about.html">About Platform</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>System</h4>
+                <ul>
+                    <li><a href="admin/index.html">Admin Login</a></li>
+                    <li><a href="admin/dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p id="footer-copyright">&copy; 2026 Aura Resource Platform. All dynamic rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, query, where, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // State Management
+        let currentResourceId = null;
+        let categoryData = null;
+        let itemsList = [];
+        let searchQuery = '';
+        let currentSort = 'newest';
+
+        // Mobile Nav Setup
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if(mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentResourceId = urlParams.get('id');
+
+            await loadGlobalSettings();
+
+            if (!currentResourceId) {
+                showError("Invalid Resource Link", "No resource category ID was specified in the URL.");
+                return;
+            }
+
+            await loadCategoryDetails();
+            if (categoryData) {
+                await incrementCategoryView();
+                await loadCategoryItems();
+                setupControls();
+            }
+        });
+
+        // 1. Global Site Settings
+        async function loadGlobalSettings() {
+            try {
+                const docRef = doc(db, "settings", "global");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.siteName) {
+                        document.getElementById('brand-name').textContent = data.siteName;
+                        document.getElementById('footer-brand-name').textContent = data.siteName;
+                    }
+                    if (data.siteDescription) {
+                        document.getElementById('footer-description').textContent = data.siteDescription;
+                    }
+                    if (data.faviconUrl) {
+                        document.getElementById('favicon').href = data.faviconUrl;
+                    }
+                    if(data.footerText) {
+                        document.getElementById('footer-copyright').innerHTML = data.footerText;
+                    }
+                }
+            } catch (err) {
+                console.warn("Global settings load error:", err);
+            }
+        }
+
+        // 2. Fetch Category Meta
+        async function loadCategoryDetails() {
+            const skeleton = document.getElementById('category-header-skeleton');
+            const content = document.getElementById('category-header-content');
+
+            try {
+                const resDocRef = doc(db, "resources", currentResourceId);
+                const resSnap = await getDoc(resDocRef);
+
+                if (!resSnap.exists() || resSnap.data().status !== 'published') {
+                    showError("Category Not Found", "This category document does not exist or has been disabled.");
+                    return;
+                }
+
+                categoryData = { id: resSnap.id, ...resSnap.data() };
+
+                // Set SEO
+                document.title = `${categoryData.name} - Category | Aura Resource Platform`;
+                document.getElementById('breadcrumb-current').textContent = categoryData.name;
+
+                // Render Header Details
+                document.getElementById('category-icon-box').textContent = categoryData.icon || '📦';
+                document.getElementById('category-name').textContent = categoryData.name;
+                document.getElementById('category-description').textContent = categoryData.description || 'No detailed description available.';
+                document.getElementById('category-views').textContent = formatNumber((categoryData.viewCount || 0) + 1);
+
+                if (categoryData.featured) {
+                    const featBadge = document.getElementById('category-featured-badge');
+                    featBadge.style.display = 'inline-block';
+                }
+
+                // Render Tags
+                const tagsContainer = document.getElementById('category-tags');
+                tagsContainer.innerHTML = '';
+                if (categoryData.tags && Array.isArray(categoryData.tags)) {
+                    categoryData.tags.forEach(tag => {
+                        const tagEl = document.createElement('span');
+                        tagEl.className = 'tag-pill';
+                        tagEl.textContent = tag;
+                        tagsContainer.appendChild(tagEl);
+                    });
+                }
+
+                skeleton.remove();
+                content.classList.remove('hidden');
+
+            } catch (err) {
+                console.error("Error loading category details:", err);
+                showError("Database Error", "Failed to load category data from Firebase.");
+            }
+        }
+
+        // 3. Increment Resource View Counter
+        async function incrementCategoryView() {
+            try {
+                const resRef = doc(db, "resources", currentResourceId);
+                await updateDoc(resRef, {
+                    viewCount: increment(1)
+                });
+            } catch (err) {
+                console.warn("Could not increment category view count:", err);
+            }
+        }
+
+        // 4. Load Associated Items/Versions
+        async function loadCategoryItems() {
+            const skeleton = document.getElementById('items-skeleton-grid');
+
+            try {
+                const q = query(
+                    collection(db, "items"),
+                    where("resourceId", "==", currentResourceId),
+                    where("status", "==", "published")
+                );
+
+                const snapshot = await getDocs(q);
+                itemsList = [];
+
+                snapshot.forEach(docSnap => {
+                    itemsList.push({
+                        id: docSnap.id,
+                        ...docSnap.data()
+                    });
+                });
+
+                document.getElementById('category-item-count').textContent = itemsList.length;
+                skeleton.remove();
+                renderItems();
+
+            } catch (err) {
+                console.error("Error fetching items:", err);
+                skeleton.remove();
+                document.getElementById('items-empty').classList.remove('hidden');
+            }
+        }
+
+        // 5. Render Items List with Search & Sort
+        function renderItems() {
+            const grid = document.getElementById('items-grid');
+            const empty = document.getElementById('items-empty');
+
+            let filtered = [...itemsList];
+
+            // Search filter
+            if (searchQuery.trim() !== '') {
+                const term = searchQuery.toLowerCase();
+                filtered = filtered.filter(item => {
+                    const titleMatch = (item.title || '').toLowerCase().includes(term);
+                    const versionMatch = (item.versionNumber || '').toLowerCase().includes(term);
+                    const descMatch = (item.description || item.shortDescription || '').toLowerCase().includes(term);
+                    return titleMatch || versionMatch || descMatch;
+                });
+            }
+
+            // Sort
+            filtered.sort((a, b) => {
+                if (currentSort === 'newest') {
+                    const dateA = a.createdAt?.seconds || 0;
+                    const dateB = b.createdAt?.seconds || 0;
+                    return dateB - dateA;
+                } else if (currentSort === 'version') {
+                    return (b.versionNumber || '').localeCompare(a.versionNumber || '', undefined, { numeric: true });
+                } else if (currentSort === 'downloads') {
+                    return (b.downloadCount || 0) - (a.downloadCount || 0);
+                } else if (currentSort === 'alphabetical') {
+                    return (a.title || '').localeCompare(b.title || '');
+                }
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+            } else {
+                empty.classList.add('hidden');
+                grid.innerHTML = '';
+                filtered.forEach(item => {
+                    grid.appendChild(buildItemCard(item));
+                });
+                grid.classList.remove('hidden');
+            }
+        }
+
+        // 6. Build Item Card Component
+        function buildItemCard(item) {
+            const card = document.createElement('div');
+            card.className = 'item-card glass-card 3d-card';
+            card.innerHTML = `
+                <div class="item-card-cover">
+                    <img src="${item.thumbnail || item.coverImage || 'assets/images/default-item.svg'}" alt="${escapeHTML(item.title)}" loading="lazy">
+                    ${item.versionNumber ? `<span class="version-tag">v${escapeHTML(item.versionNumber)}</span>` : ''}
+                    ${item.featured ? `<span class="featured-tag-badge">Featured Build</span>` : ''}
+                </div>
+                <div class="item-card-body">
+                    <h3 class="item-card-title">${escapeHTML(item.title)}</h3>
+                    <p class="item-card-desc">${escapeHTML(item.shortDescription || item.description || '')}</p>
+
+                    <div class="item-card-stats">
+                        <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${item.downloadCount || 0} Downloads</span>
+                        <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> ${item.viewCount || 0} Views</span>
+                    </div>
+
+                    <a href="version.html?id=${item.id}" class="btn btn-primary btn-sm btn-block mt-3">
+                        <span>View Release Details</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+
+        // 7. Setup UI Event Listeners
+        function setupControls() {
+            const searchInput = document.getElementById('item-search-input');
+            const clearBtn = document.getElementById('clear-item-search');
+            const sortSelect = document.getElementById('item-sort-select');
+
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                if (searchQuery.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+                renderItems();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchQuery = '';
+                clearBtn.classList.add('hidden');
+                renderItems();
+            });
+
+            sortSelect.addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                renderItems();
+            });
+        }
+
+        // Show Error Screen
+        function showError(title, msg) {
+            document.getElementById('category-hero').classList.add('hidden');
+            document.getElementById('category-items-section').classList.add('hidden');
+            
+            const errState = document.getElementById('category-error-state');
+            document.getElementById('error-title').textContent = title;
+            document.getElementById('error-message').textContent = msg;
+            errState.classList.remove('hidden');
+        }
+
+        // Utilities
+        function escapeHTML(str) {
+            if(!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(num);
+        }
+    </script>
+</body>
+</html>

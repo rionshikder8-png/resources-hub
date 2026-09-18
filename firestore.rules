@@ -1,0 +1,47 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Check if request is from an authenticated admin user
+    function isAdmin() {
+      return request.auth != null;
+    }
+
+    // Global Settings (Public read for site config, Admin write)
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Categories / Resources (Public read, Admin write)
+    match /resources/{resourceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      // Allow public counter increments for category view tracking
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount']);
+    }
+
+    // Releases / Items (Public read, Admin write)
+    match /items/{itemId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      // Allow unauthenticated users to increment view and download counts
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewCount', 'downloadCount']);
+    }
+
+    // Materials (Public read, Admin write)
+    match /materials/{materialId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // File Mirrors & Binary Assets (Public read, Admin write)
+    match /files/{fileId} {
+      allow read: if true;
+      allow write: if isAdmin();
+      // Allow public download telemetry counter updates
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloadCount']);
+    }
+  }
+}

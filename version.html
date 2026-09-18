@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Version Details - Aura Resource Platform</title>
+    <meta name="description" id="page-description" content="Download and view release details for this resource version.">
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" id="og-title" content="Version Details - Aura Resource Platform">
+    <meta property="og:description" id="og-description" content="View changelog, features, and download links.">
+    <meta property="og:type" content="article">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark">
+
+    <!-- Header / Navigation -->
+    <header class="header-glass navbar" id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="brand-logo" id="brand-logo-container">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="resources.html" class="nav-link active">Resources</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="search.html" class="btn-icon" aria-label="Search Platform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+                <a href="admin/index.html" class="btn btn-outline btn-sm">Admin Access</a>
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="page-main-padding">
+        <!-- Breadcrumb Navigation -->
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item"><a href="resources.html">Resources</a></li>
+                    <li class="breadcrumb-item"><a href="#" id="breadcrumb-category-link">Category</a></li>
+                    <li class="breadcrumb-item active" id="breadcrumb-current">Release Details</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Error Container -->
+        <div id="item-error-state" class="container hidden">
+            <div class="glass-card error-card text-center">
+                <div class="error-icon">⚠️</div>
+                <h2 id="error-title">Release Version Not Found</h2>
+                <p id="error-message">The requested item or version build could not be located or has been archived.</p>
+                <a href="resources.html" class="btn btn-primary btn-glow mt-4">Return to Catalog</a>
+            </div>
+        </div>
+
+        <!-- Version Details Content -->
+        <div id="version-content-area" class="container">
+            <!-- Skeleton Loader -->
+            <div id="version-skeleton" class="glass-card skeleton-header-card mb-4">
+                <div class="skeleton skeleton-avatar"></div>
+                <div class="skeleton-header-lines">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-text-block"></div>
+                </div>
+            </div>
+
+            <!-- Version Hero Card -->
+            <div id="version-hero" class="glass-card item-hero-card hidden mb-4">
+                <div class="item-hero-grid">
+                    <div class="item-hero-media">
+                        <img id="version-cover-img" src="assets/images/default-item.svg" alt="Resource Cover Image" class="item-cover-image">
+                    </div>
+                    <div class="item-hero-info">
+                        <div class="item-hero-tags">
+                            <span class="pill-tag" id="version-badge">v1.0.0</span>
+                            <span class="badge-glow" id="category-badge">Category</span>
+                            <span class="status-pill active" id="status-badge">Official Release</span>
+                        </div>
+                        <h1 class="item-hero-title" id="version-title">Loading Item Title...</h1>
+                        <p class="item-hero-subtitle" id="version-short-desc"></p>
+
+                        <div class="item-hero-stats">
+                            <div class="stat-box">
+                                <span class="stat-label">Downloads</span>
+                                <span class="stat-value" id="version-downloads">0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Views</span>
+                                <span class="stat-value" id="version-views">0</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">File Size</span>
+                                <span class="stat-value" id="version-file-size">N/A</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">Release Date</span>
+                                <span class="stat-value" id="version-date">--</span>
+                            </div>
+                        </div>
+
+                        <div class="item-cta-group">
+                            <a href="#" id="primary-download-btn" class="btn btn-primary btn-glow btn-lg" target="_blank" rel="noopener noreferrer">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>Download Build</span>
+                            </a>
+                            <button type="button" id="copy-link-btn" class="btn btn-outline btn-lg" aria-label="Share page link">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                <span id="copy-btn-text">Share Link</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Content Layout Grid -->
+            <div id="version-details-grid" class="item-details-layout hidden">
+                <!-- Main Body Column -->
+                <div class="layout-main">
+                    <!-- Complete Description Card -->
+                    <div class="glass-card mb-4">
+                        <h2 class="card-section-title">Overview & Specifications</h2>
+                        <div class="prose-content" id="version-full-description">
+                            <p>Loading specifications...</p>
+                        </div>
+                    </div>
+
+                    <!-- Release Notes / Changelog -->
+                    <div class="glass-card mb-4" id="changelog-card">
+                        <h2 class="card-section-title">Changelog & Release Notes</h2>
+                        <div class="changelog-box" id="version-changelog">
+                            <p class="text-muted">No specific release notes provided for this version.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mirror / Additional Downloads -->
+                    <div class="glass-card mb-4" id="mirrors-card">
+                        <h2 class="card-section-title">Download Mirrors & Verification</h2>
+                        <div class="mirror-links-list" id="version-mirrors">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Metadata Column -->
+                <div class="layout-sidebar">
+                    <!-- Technical Meta Card -->
+                    <div class="glass-card mb-4">
+                        <h3 class="sidebar-title">Information</h3>
+                        <ul class="meta-list">
+                            <li>
+                                <span class="meta-key">Architecture / Format</span>
+                                <span class="meta-val" id="meta-format">Standard Archive</span>
+                            </li>
+                            <li>
+                                <span class="meta-key">License</span>
+                                <span class="meta-val" id="meta-license">Standard / Open</span>
+                            </li>
+                            <li>
+                                <span class="meta-key">Requirements</span>
+                                <span class="meta-val" id="meta-requirements">Universal</span>
+                            </li>
+                            <li>
+                                <span class="meta-key">SHA256 Checksum</span>
+                                <span class="meta-val code-hash" id="meta-hash">Verified</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tags Card -->
+                    <div class="glass-card mb-4">
+                        <h3 class="sidebar-title">Tags</h3>
+                        <div class="category-tags-list" id="version-tags"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <div class="logo-icon-3d">
+                        <span class="core-dot"></span>
+                    </div>
+                    <span class="brand-name" id="footer-brand-name">AURA</span>
+                </div>
+                <p id="footer-description" class="footer-desc">
+                    A dynamic, next-generation digital resource archive and deployment platform.
+                </p>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="resources.html">All Resources</a></li>
+                    <li><a href="search.html">Instant Search</a></li>
+                    <li><a href="about.html">About Platform</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>System</h4>
+                <ul>
+                    <li><a href="admin/index.html">Admin Login</a></li>
+                    <li><a href="admin/dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p id="footer-copyright">&copy; 2026 Aura Resource Platform. All dynamic rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // State Variables
+        let currentItemId = null;
+        let itemData = null;
+
+        // Mobile Nav Setup
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentItemId = urlParams.get('id');
+
+            await loadGlobalSettings();
+
+            if (!currentItemId) {
+                showError("Invalid Version Link", "No item or version ID was provided in the URL.");
+                return;
+            }
+
+            await loadItemDetails();
+            if (itemData) {
+                await incrementViewCount();
+                setupDownloadTriggers();
+                setupCopyLink();
+            }
+        });
+
+        // 1. Load Platform Global Branding
+        async function loadGlobalSettings() {
+            try {
+                const docRef = doc(db, "settings", "global");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.siteName) {
+                        document.getElementById('brand-name').textContent = data.siteName;
+                        document.getElementById('footer-brand-name').textContent = data.siteName;
+                    }
+                    if (data.siteDescription) {
+                        document.getElementById('footer-description').textContent = data.siteDescription;
+                    }
+                    if (data.faviconUrl) {
+                        document.getElementById('favicon').href = data.faviconUrl;
+                    }
+                    if (data.footerText) {
+                        document.getElementById('footer-copyright').innerHTML = data.footerText;
+                    }
+                }
+            } catch (err) {
+                console.warn("Global settings load warning:", err);
+            }
+        }
+
+        // 2. Fetch Version Document & Resource Parent
+        async function loadItemDetails() {
+            const skeleton = document.getElementById('version-skeleton');
+            const hero = document.getElementById('version-hero');
+            const grid = document.getElementById('version-details-grid');
+
+            try {
+                const itemRef = doc(db, "items", currentItemId);
+                const itemSnap = await getDoc(itemRef);
+
+                if (!itemSnap.exists()) {
+                    showError("Release Not Found", "The requested build version does not exist in the database.");
+                    return;
+                }
+
+                itemData = { id: itemSnap.id, ...itemSnap.data() };
+
+                // Load parent category if linked
+                if (itemData.resourceId) {
+                    try {
+                        const resRef = doc(db, "resources", itemData.resourceId);
+                        const resSnap = await getDoc(resRef);
+                        if (resSnap.exists()) {
+                            const resData = resSnap.data();
+                            const categoryLink = document.getElementById('breadcrumb-category-link');
+                            categoryLink.textContent = resData.name || 'Category';
+                            categoryLink.href = `category.html?id=${itemData.resourceId}`;
+
+                            const catBadge = document.getElementById('category-badge');
+                            catBadge.textContent = resData.name || 'Resource';
+                        }
+                    } catch (e) {
+                        console.warn("Could not fetch parent category:", e);
+                    }
+                }
+
+                // Update Page Metadata
+                document.title = `${itemData.title || 'Version Details'} - Aura Resource Platform`;
+                document.getElementById('breadcrumb-current').textContent = itemData.versionNumber ? `v${itemData.versionNumber}` : itemData.title;
+
+                // Render Hero Info
+                document.getElementById('version-title').textContent = itemData.title || 'Untitled Release';
+                document.getElementById('version-short-desc').textContent = itemData.shortDescription || itemData.description || '';
+                document.getElementById('version-badge').textContent = itemData.versionNumber ? `v${itemData.versionNumber}` : 'Build';
+                
+                if (itemData.thumbnail || itemData.coverImage) {
+                    document.getElementById('version-cover-img').src = itemData.thumbnail || itemData.coverImage;
+                }
+
+                document.getElementById('version-downloads').textContent = formatNumber(itemData.downloadCount || 0);
+                document.getElementById('version-views').textContent = formatNumber((itemData.viewCount || 0) + 1);
+                document.getElementById('version-file-size').textContent = itemData.fileSize || 'N/A';
+                
+                if (itemData.createdAt) {
+                    const dateObj = itemData.createdAt.seconds ? new Date(itemData.createdAt.seconds * 1000) : new Date(itemData.createdAt);
+                    document.getElementById('version-date').textContent = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+
+                // Setup Download Primary CTA
+                const downloadBtn = document.getElementById('primary-download-btn');
+                if (itemData.downloadUrl || itemData.fileUrl) {
+                    downloadBtn.href = itemData.downloadUrl || itemData.fileUrl;
+                } else {
+                    downloadBtn.classList.add('disabled');
+                    downloadBtn.removeAttribute('href');
+                    downloadBtn.querySelector('span').textContent = 'No File Attached';
+                }
+
+                // Main Description & Notes
+                document.getElementById('version-full-description').innerHTML = formatMarkdownOrHTML(itemData.description || itemData.shortDescription || 'No comprehensive overview provided.');
+                
+                const changelogContainer = document.getElementById('version-changelog');
+                if (itemData.changelog || itemData.releaseNotes) {
+                    changelogContainer.innerHTML = formatMarkdownOrHTML(itemData.changelog || itemData.releaseNotes);
+                }
+
+                // Sidebar Meta Info
+                if (itemData.format) document.getElementById('meta-format').textContent = itemData.format;
+                if (itemData.license) document.getElementById('meta-license').textContent = itemData.license;
+                if (itemData.requirements) document.getElementById('meta-requirements').textContent = itemData.requirements;
+                if (itemData.checksum) document.getElementById('meta-hash').textContent = itemData.checksum;
+
+                // Tags
+                const tagsContainer = document.getElementById('version-tags');
+                tagsContainer.innerHTML = '';
+                if (itemData.tags && Array.isArray(itemData.tags)) {
+                    itemData.tags.forEach(tag => {
+                        const tagEl = document.createElement('span');
+                        tagEl.className = 'tag-pill';
+                        tagEl.textContent = tag;
+                        tagsContainer.appendChild(tagEl);
+                    });
+                } else {
+                    tagsContainer.innerHTML = '<span class="text-muted">No tags</span>';
+                }
+
+                // Render Mirrors
+                renderMirrors(itemData.mirrors || []);
+
+                skeleton.remove();
+                hero.classList.remove('hidden');
+                grid.classList.remove('hidden');
+
+            } catch (err) {
+                console.error("Error loading version details:", err);
+                showError("Database Error", "Failed to retrieve release specifications.");
+            }
+        }
+
+        // 3. Render Mirror Downloads
+        function renderMirrors(mirrors) {
+            const container = document.getElementById('version-mirrors');
+            container.innerHTML = '';
+
+            const primaryUrl = itemData.downloadUrl || itemData.fileUrl;
+            if (primaryUrl) {
+                container.appendChild(createMirrorRow('Primary Server', primaryUrl, 'Official Server'));
+            }
+
+            if (Array.isArray(mirrors) && mirrors.length > 0) {
+                mirrors.forEach((m, idx) => {
+                    container.appendChild(createMirrorRow(m.name || `Mirror #${idx + 1}`, m.url, m.provider || 'External Link'));
+                });
+            } else if (!primaryUrl) {
+                container.innerHTML = '<p class="text-muted">No download mirrors available for this build.</p>';
+            }
+        }
+
+        function createMirrorRow(name, url, badge) {
+            const row = document.createElement('div');
+            row.className = 'mirror-item-row';
+            row.innerHTML = `
+                <div class="mirror-info">
+                    <strong>${escapeHTML(name)}</strong>
+                    <span class="mirror-provider-badge">${escapeHTML(badge)}</span>
+                </div>
+                <a href="${escapeHTML(url)}" class="btn btn-outline btn-sm download-track-trigger" target="_blank" rel="noopener noreferrer">
+                    <span>Download</span>
+                </a>
+            `;
+            return row;
+        }
+
+        // 4. View Counter Increment
+        async function incrementViewCount() {
+            try {
+                const itemRef = doc(db, "items", currentItemId);
+                await updateDoc(itemRef, { viewCount: increment(1) });
+            } catch (err) {
+                console.warn("Could not increment view count:", err);
+            }
+        }
+
+        // 5. Download Counter Increment
+        function setupDownloadTriggers() {
+            document.addEventListener('click', async (e) => {
+                const trigger = e.target.closest('#primary-download-btn, .download-track-trigger');
+                if (trigger) {
+                    try {
+                        const itemRef = doc(db, "items", currentItemId);
+                        await updateDoc(itemRef, { downloadCount: increment(1) });
+                        
+                        // Update UI counter real-time
+                        const counterEl = document.getElementById('version-downloads');
+                        const currentVal = parseInt(counterEl.textContent.replace(/,/g, '')) || 0;
+                        counterEl.textContent = formatNumber(currentVal + 1);
+                    } catch (err) {
+                        console.warn("Download tracking error:", err);
+                    }
+                }
+            });
+        }
+
+        // 6. Copy Link Handler
+        function setupCopyLink() {
+            const copyBtn = document.getElementById('copy-link-btn');
+            const copyText = document.getElementById('copy-btn-text');
+
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    copyText.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyText.textContent = 'Share Link';
+                    }, 2000);
+                }).catch(err => {
+                    console.error("Copy failed:", err);
+                });
+            });
+        }
+
+        // Error Handling Display
+        function showError(title, msg) {
+            document.getElementById('version-content-area').classList.add('hidden');
+            
+            const errState = document.getElementById('item-error-state');
+            document.getElementById('error-title').textContent = title;
+            document.getElementById('error-message').textContent = msg;
+            errState.classList.remove('hidden');
+        }
+
+        // Helpers
+        function escapeHTML(str) {
+            if(!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(num);
+        }
+
+        function formatMarkdownOrHTML(text) {
+            if (!text) return '';
+            return text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">About - Aura Resource Platform</title>
+    <meta name="description" content="Learn more about the Aura Resource Platform architecture, real-time repository distribution, and core infrastructure.">
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" id="og-title" content="About - Aura Resource Platform">
+    <meta property="og:description" content="Next-generation digital resource archive and software distribution ecosystem.">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark">
+
+    <!-- Header / Navigation -->
+    <header class="header-glass navbar" id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="brand-logo" id="brand-logo-container">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="resources.html" class="nav-link">Resources</a>
+                <a href="search.html" class="nav-link">Search</a>
+                <a href="about.html" class="nav-link active">About</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="search.html" class="btn-icon" aria-label="Search Platform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+                <a href="admin/index.html" class="btn btn-outline btn-sm">Admin Access</a>
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="page-main-padding">
+        <!-- Breadcrumb Navigation -->
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">About Platform</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- About Hero Section -->
+        <section class="about-hero-section">
+            <div class="container">
+                <div class="glass-card hero-about-card">
+                    <div class="about-hero-grid">
+                        <div class="about-hero-text">
+                            <span class="section-badge">Platform Overview</span>
+                            <h1 class="hero-heading">Centralized Digital Resource Engine</h1>
+                            <p class="hero-paragraph">
+                                Aura is an architecture designed for real-time digital asset archiving, software release version tracking, and secure media distribution. Engineered for high performance, dynamic metadata processing, and seamless user accessibility.
+                            </p>
+                            <div class="hero-cta-group mt-4">
+                                <a href="resources.html" class="btn btn-primary btn-glow">Browse Repository</a>
+                                <a href="search.html" class="btn btn-outline">Query Catalog</a>
+                            </div>
+                        </div>
+                        <div class="about-hero-graphic">
+                            <div class="graphic-3d-box">
+                                <div class="floating-ring ring-1"></div>
+                                <div class="floating-ring ring-2"></div>
+                                <div class="central-core">⚡</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Platform Metrics Section -->
+        <section class="section-padding">
+            <div class="container">
+                <div class="section-header text-center mb-4">
+                    <span class="section-badge">Real-Time Metrics</span>
+                    <h2 class="section-title">Repository Analytics</h2>
+                    <p class="section-desc">Live metrics queried directly from our Firestore infrastructure.</p>
+                </div>
+
+                <div class="stats-counter-grid">
+                    <div class="glass-card stat-card text-center">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-number" id="stat-categories">--</div>
+                        <div class="stat-heading">Resource Categories</div>
+                    </div>
+
+                    <div class="glass-card stat-card text-center">
+                        <div class="stat-icon">🚀</div>
+                        <div class="stat-number" id="stat-items">--</div>
+                        <div class="stat-heading">Published Releases</div>
+                    </div>
+
+                    <div class="glass-card stat-card text-center">
+                        <div class="stat-icon">👁️</div>
+                        <div class="stat-number" id="stat-views">--</div>
+                        <div class="stat-heading">Total Platform Views</div>
+                    </div>
+
+                    <div class="glass-card stat-card text-center">
+                        <div class="stat-icon">📥</div>
+                        <div class="stat-number" id="stat-downloads">--</div>
+                        <div class="stat-heading">Total Downloads</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture Features Grid -->
+        <section class="section-padding pt-0">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">System Features</span>
+                    <h2 class="section-title">Engineered Capabilities</h2>
+                </div>
+
+                <div class="features-layout-grid">
+                    <div class="glass-card feature-box">
+                        <div class="feature-icon-wrapper">⚡</div>
+                        <h3>Real-time Synchronization</h3>
+                        <p>Powered by Firebase NoSQL architecture for instant content updates, fast query speeds, and zero-latency indexing.</p>
+                    </div>
+
+                    <div class="glass-card feature-box">
+                        <div class="feature-icon-wrapper">🛡️</div>
+                        <h3>Version Tracking</h3>
+                        <p>Comprehensive build version history, release notes, hash verification, and verified mirror link distribution.</p>
+                    </div>
+
+                    <div class="glass-card feature-box">
+                        <div class="feature-icon-wrapper">💎</div>
+                        <h3>Glassmorphic UI</h3>
+                        <p>High-contrast dark mode interface built with dynamic visual depth, interactive micro-animations, and fluid responsiveness.</p>
+                    </div>
+
+                    <div class="glass-card feature-box">
+                        <div class="feature-icon-wrapper">🔍</div>
+                        <h3>Instant Query Engine</h3>
+                        <p>Client-side search capability indexing tags, version tags, categories, and titles on the fly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <div class="logo-icon-3d">
+                        <span class="core-dot"></span>
+                    </div>
+                    <span class="brand-name" id="footer-brand-name">AURA</span>
+                </div>
+                <p id="footer-description" class="footer-desc">
+                    A dynamic, next-generation digital resource archive and deployment platform.
+                </p>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="resources.html">All Resources</a></li>
+                    <li><a href="search.html">Instant Search</a></li>
+                    <li><a href="about.html">About Platform</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>System</h4>
+                <ul>
+                    <li><a href="admin/index.html">Admin Login</a></li>
+                    <li><a href="admin/dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p id="footer-copyright">&copy; 2026 Aura Resource Platform. All dynamic rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Mobile Nav Setup
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadGlobalSettings();
+            await loadPlatformMetrics();
+        });
+
+        // 1. Fetch Global Settings
+        async function loadGlobalSettings() {
+            try {
+                const docRef = doc(db, "settings", "global");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.siteName) {
+                        document.getElementById('brand-name').textContent = data.siteName;
+                        document.getElementById('footer-brand-name').textContent = data.siteName;
+                    }
+                    if (data.siteDescription) {
+                        document.getElementById('footer-description').textContent = data.siteDescription;
+                    }
+                    if (data.faviconUrl) {
+                        document.getElementById('favicon').href = data.faviconUrl;
+                    }
+                    if (data.footerText) {
+                        document.getElementById('footer-copyright').innerHTML = data.footerText;
+                    }
+                }
+            } catch (err) {
+                console.warn("Global settings load error:", err);
+            }
+        }
+
+        // 2. Aggregate Live Platform Metrics
+        async function loadPlatformMetrics() {
+            try {
+                // Fetch Resources (Categories)
+                const resQuery = query(collection(db, "resources"), where("status", "==", "published"));
+                const resSnap = await getDocs(resQuery);
+                
+                let categoryCount = resSnap.size;
+                let totalCategoryViews = 0;
+                resSnap.forEach(d => {
+                    totalCategoryViews += (d.data().viewCount || 0);
+                });
+
+                // Fetch Items (Builds / Releases)
+                const itemQuery = query(collection(db, "items"), where("status", "==", "published"));
+                const itemSnap = await getDocs(itemQuery);
+
+                let itemCount = itemSnap.size;
+                let totalItemViews = 0;
+                let totalItemDownloads = 0;
+
+                itemSnap.forEach(d => {
+                    const item = d.data();
+                    totalItemViews += (item.viewCount || 0);
+                    totalItemDownloads += (item.downloadCount || 0);
+                });
+
+                // Animate Numbers in UI
+                animateCounter('stat-categories', categoryCount);
+                animateCounter('stat-items', itemCount);
+                animateCounter('stat-views', totalCategoryViews + totalItemViews);
+                animateCounter('stat-downloads', totalItemDownloads);
+
+            } catch (err) {
+                console.error("Error computing platform analytics:", err);
+                document.getElementById('stat-categories').textContent = '0';
+                document.getElementById('stat-items').textContent = '0';
+                document.getElementById('stat-views').textContent = '0';
+                document.getElementById('stat-downloads').textContent = '0';
+            }
+        }
+
+        // 3. Counter Animation Utility
+        function animateCounter(id, targetVal) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            if (targetVal === 0) {
+                el.textContent = '0';
+                return;
+            }
+
+            let current = 0;
+            const duration = 1200; // 1.2s animation
+            const step = Math.max(1, Math.floor(targetVal / (duration / 16)));
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= targetVal) {
+                    current = targetVal;
+                    clearInterval(timer);
+                }
+                el.textContent = new Intl.NumberFormat('en-US').format(current);
+            }, 16);
+        }
+    </script>
+</body>
+</html>

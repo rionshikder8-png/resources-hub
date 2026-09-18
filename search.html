@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Search Resources & Releases - Aura Resource Platform</title>
+    <meta name="description" content="Search across all categories, items, release notes, and downloads on Aura Resource Platform.">
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" id="og-title" content="Search Resources - Aura Resource Platform">
+    <meta property="og:description" content="Search across all categories, items, release notes, and downloads.">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Global Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body class="theme-dark">
+
+    <!-- Header / Navigation -->
+    <header class="header-glass navbar" id="navbar">
+        <div class="container nav-wrapper">
+            <a href="index.html" class="brand-logo" id="brand-logo-container">
+                <div class="logo-icon-3d">
+                    <span class="core-dot"></span>
+                    <span class="orbit-ring"></span>
+                </div>
+                <span class="brand-name" id="brand-name">AURA</span>
+            </a>
+
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="resources.html" class="nav-link">Resources</a>
+                <a href="search.html" class="nav-link active">Search</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a href="search.html" class="btn-icon active" aria-label="Search Platform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+                <a href="admin/index.html" class="btn btn-outline btn-sm">Admin Access</a>
+                <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content" class="page-main-padding">
+        <!-- Breadcrumb Navigation -->
+        <div class="container">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                    <li class="breadcrumb-item active">Search Catalog</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Search Header Hero Section -->
+        <section class="search-hero-section">
+            <div class="container">
+                <div class="section-header text-center mb-4">
+                    <span class="section-badge">Instant Query Engine</span>
+                    <h1 class="section-title">Search Platform Repository</h1>
+                    <p class="section-desc">Find software builds, system categories, release packages, and documentation instantly.</p>
+                </div>
+
+                <!-- Main Search Bar -->
+                <div class="glass-card search-hero-box mb-4">
+                    <div class="search-input-wrapper large-search-wrapper">
+                        <svg class="search-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="global-search-input" class="form-input search-hero-input" placeholder="Search by title, tag, version (e.g. 'v1.2.0'), or keyword..." autofocus>
+                        <button type="button" id="clear-search-btn" class="clear-btn hidden" aria-label="Clear search input">&times;</button>
+                    </div>
+
+                    <!-- Filter Options Controls Bar -->
+                    <div class="catalog-controls-bar border-top mt-3 pt-3">
+                        <div class="filter-group">
+                            <label for="filter-type" class="sort-label">Type:</label>
+                            <select id="filter-type" class="form-select">
+                                <option value="all">All Content</option>
+                                <option value="items">Releases & Builds Only</option>
+                                <option value="categories">Categories Only</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter-category" class="sort-label">Category:</label>
+                            <select id="filter-category" class="form-select">
+                                <option value="all">All Categories</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="filter-sort" class="sort-label">Sort By:</label>
+                            <select id="filter-sort" class="form-select">
+                                <option value="relevance">Relevance</option>
+                                <option value="newest">Newest First</option>
+                                <option value="downloads">Most Downloaded</option>
+                                <option value="alphabetical">Title (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Results Display Section -->
+        <section class="section-padding pt-0">
+            <div class="container">
+                <!-- Active Search Meta Info Header -->
+                <div class="results-meta-bar mb-4">
+                    <div id="results-count-text" class="results-count">Searching database...</div>
+                    <div id="active-tags-container" class="active-tags-row"></div>
+                </div>
+
+                <!-- Skeleton Loader State -->
+                <div id="search-skeleton-grid" class="cards-grid">
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                    <div class="card-skeleton"></div>
+                </div>
+
+                <!-- Results Grid Container -->
+                <div id="search-results-grid" class="cards-grid hidden"></div>
+
+                <!-- Empty Search Results State -->
+                <div id="search-empty-state" class="empty-state hidden">
+                    <div class="empty-icon">🔍</div>
+                    <h3>No Matching Results Found</h3>
+                    <p>We couldn't find anything matching your search term or current filter selection.</p>
+                    <button type="button" id="reset-filters-btn" class="btn btn-outline btn-sm mt-3">Reset Search & Filters</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-glass">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="brand-logo">
+                    <div class="logo-icon-3d">
+                        <span class="core-dot"></span>
+                    </div>
+                    <span class="brand-name" id="footer-brand-name">AURA</span>
+                </div>
+                <p id="footer-description" class="footer-desc">
+                    A dynamic, next-generation digital resource archive and deployment platform.
+                </p>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="resources.html">All Resources</a></li>
+                    <li><a href="search.html">Instant Search</a></li>
+                    <li><a href="about.html">About Platform</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links-group">
+                <h4>System</h4>
+                <ul>
+                    <li><a href="admin/index.html">Admin Login</a></li>
+                    <li><a href="admin/dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <p id="footer-copyright">&copy; 2026 Aura Resource Platform. All dynamic rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Implementation -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmhfz7lLOH5H6LcjiiWpJLDTriPRk9V_38",
+            authDomain: "aura-resource.firebaseapp.com",
+            databaseURL: "https://aura-resource-default-rtdb.firebaseio.com",
+            projectId: "aura-resource",
+            storageBucket: "aura-resource.firebasestorage.app",
+            messagingSenderId: "132836049159",
+            appId: "1:132836049159:web:513d4ffbabe801ae80c5a2",
+            measurementId: "G-8BJYGLY3SF"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // State Management
+        let rawCategories = [];
+        let rawItems = [];
+        let categoryMap = {}; // Id -> Category Name
+        
+        let searchQuery = '';
+        let selectedType = 'all';
+        let selectedCategory = 'all';
+        let selectedSort = 'relevance';
+
+        // Mobile Nav Setup
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('open');
+                mobileToggle.classList.toggle('active');
+            });
+        }
+
+        // Initialize Search Page
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Parse initial URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialQuery = urlParams.get('q') || urlParams.get('query') || '';
+            
+            const searchInput = document.getElementById('global-search-input');
+            if (initialQuery) {
+                searchInput.value = initialQuery;
+                searchQuery = initialQuery;
+                document.getElementById('clear-search-btn').classList.remove('hidden');
+            }
+
+            await loadGlobalSettings();
+            await fetchAllCatalogData();
+            setupEventListeners();
+            executeSearch();
+        });
+
+        // 1. Load Platform Settings
+        async function loadGlobalSettings() {
+            try {
+                const docRef = doc(db, "settings", "global");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data.siteName) {
+                        document.getElementById('brand-name').textContent = data.siteName;
+                        document.getElementById('footer-brand-name').textContent = data.siteName;
+                    }
+                    if (data.siteDescription) {
+                        document.getElementById('footer-description').textContent = data.siteDescription;
+                    }
+                    if (data.faviconUrl) {
+                        document.getElementById('favicon').href = data.faviconUrl;
+                    }
+                    if (data.footerText) {
+                        document.getElementById('footer-copyright').innerHTML = data.footerText;
+                    }
+                }
+            } catch (err) {
+                console.warn("Global settings fetch error:", err);
+            }
+        }
+
+        // 2. Fetch All Published Data for In-Memory Querying
+        async function fetchAllCatalogData() {
+            try {
+                // Fetch Categories (Resources)
+                const resQuery = query(collection(db, "resources"), where("status", "==", "published"));
+                const resSnap = await getDocs(resQuery);
+                
+                const categorySelect = document.getElementById('filter-category');
+                
+                rawCategories = [];
+                resSnap.forEach(docSnap => {
+                    const data = { id: docSnap.id, type: 'category', ...docSnap.data() };
+                    rawCategories.push(data);
+                    categoryMap[docSnap.id] = data.name || 'Category';
+
+                    // Populate category filter dropdown
+                    const opt = document.createElement('option');
+                    opt.value = docSnap.id;
+                    opt.textContent = data.name || docSnap.id;
+                    categorySelect.appendChild(opt);
+                });
+
+                // Fetch Items / Releases
+                const itemQuery = query(collection(db, "items"), where("status", "==", "published"));
+                const itemSnap = await getDocs(itemQuery);
+                
+                rawItems = [];
+                itemSnap.forEach(docSnap => {
+                    rawItems.push({ id: docSnap.id, type: 'item', ...docSnap.data() });
+                });
+
+            } catch (err) {
+                console.error("Error fetching repository dataset:", err);
+            }
+        }
+
+        // 3. Filter, Sort, and Render Logic
+        function executeSearch() {
+            const skeleton = document.getElementById('search-skeleton-grid');
+            const grid = document.getElementById('search-results-grid');
+            const emptyState = document.getElementById('search-empty-state');
+            const countText = document.getElementById('results-count-text');
+
+            let pool = [];
+
+            // Filter by Content Type
+            if (selectedType === 'all') {
+                pool = [...rawCategories, ...rawItems];
+            } else if (selectedType === 'categories') {
+                pool = [...rawCategories];
+            } else if (selectedType === 'items') {
+                pool = [...rawItems];
+            }
+
+            // Filter by Category
+            if (selectedCategory !== 'all') {
+                pool = pool.filter(record => {
+                    if (record.type === 'category') return record.id === selectedCategory;
+                    if (record.type === 'item') return record.resourceId === selectedCategory;
+                    return true;
+                });
+            }
+
+            // Text Search Matcher
+            const term = searchQuery.trim().toLowerCase();
+            if (term !== '') {
+                pool = pool.filter(record => {
+                    const nameMatch = (record.name || record.title || '').toLowerCase().includes(term);
+                    const descMatch = (record.description || record.shortDescription || '').toLowerCase().includes(term);
+                    const versionMatch = (record.versionNumber || '').toLowerCase().includes(term);
+                    
+                    let tagsMatch = false;
+                    if (Array.isArray(record.tags)) {
+                        tagsMatch = record.tags.some(t => t.toLowerCase().includes(term));
+                    }
+
+                    return nameMatch || descMatch || versionMatch || tagsMatch;
+                });
+            }
+
+            // Sorting
+            pool.sort((a, b) => {
+                if (selectedSort === 'newest') {
+                    const dateA = a.createdAt?.seconds || 0;
+                    const dateB = b.createdAt?.seconds || 0;
+                    return dateB - dateA;
+                } else if (selectedSort === 'downloads') {
+                    const dlA = a.downloadCount || a.viewCount || 0;
+                    const dlB = b.downloadCount || b.viewCount || 0;
+                    return dlB - dlA;
+                } else if (selectedSort === 'alphabetical') {
+                    const titleA = (a.name || a.title || '').toLowerCase();
+                    const titleB = (b.name || b.title || '').toLowerCase();
+                    return titleA.localeCompare(titleB);
+                } else {
+                    // Default: Relevance (Exact/Prefix matches ranked higher)
+                    if (term === '') return 0;
+                    const titleA = (a.name || a.title || '').toLowerCase();
+                    const titleB = (b.name || b.title || '').toLowerCase();
+                    const aExact = titleA.startsWith(term);
+                    const bExact = titleB.startsWith(term);
+                    if (aExact && !bExact) return -1;
+                    if (!aExact && bExact) return 1;
+                    return 0;
+                }
+            });
+
+            // Update UI State
+            if (skeleton) skeleton.remove();
+
+            countText.textContent = `Found ${pool.length} ${pool.length === 1 ? 'result' : 'results'}${term ? ` for "${escapeHTML(term)}"` : ''}`;
+
+            if (pool.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.innerHTML = '';
+                pool.forEach(record => {
+                    if (record.type === 'category') {
+                        grid.appendChild(buildCategoryCard(record));
+                    } else {
+                        grid.appendChild(buildItemCard(record));
+                    }
+                });
+                grid.classList.remove('hidden');
+            }
+        }
+
+        // 4. Card Builder: Category Result
+        function buildCategoryCard(category) {
+            const card = document.createElement('div');
+            card.className = 'item-card glass-card 3d-card category-result-card';
+            card.innerHTML = `
+                <div class="card-type-badge">Category</div>
+                <div class="item-card-body pt-4">
+                    <div class="category-icon-medium mb-2">${category.icon || '📦'}</div>
+                    <h3 class="item-card-title">${escapeHTML(category.name)}</h3>
+                    <p class="item-card-desc">${escapeHTML(category.description || 'No description provided.')}</p>
+
+                    <div class="item-card-stats">
+                        <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> ${category.viewCount || 0} Views</span>
+                    </div>
+
+                    <a href="category.html?id=${category.id}" class="btn btn-outline btn-sm btn-block mt-3">
+                        <span>Explore Category</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+
+        // 5. Card Builder: Item / Build Result
+        function buildItemCard(item) {
+            const card = document.createElement('div');
+            card.className = 'item-card glass-card 3d-card';
+            const catName = categoryMap[item.resourceId] || 'Release';
+
+            card.innerHTML = `
+                <div class="item-card-cover">
+                    <img src="${item.thumbnail || item.coverImage || 'assets/images/default-item.svg'}" alt="${escapeHTML(item.title)}" loading="lazy">
+                    ${item.versionNumber ? `<span class="version-tag">v${escapeHTML(item.versionNumber)}</span>` : ''}
+                    <span class="category-tag-pill">${escapeHTML(catName)}</span>
+                </div>
+                <div class="item-card-body">
+                    <h3 class="item-card-title">${escapeHTML(item.title)}</h3>
+                    <p class="item-card-desc">${escapeHTML(item.shortDescription || item.description || '')}</p>
+
+                    <div class="item-card-stats">
+                        <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ${item.downloadCount || 0} Downloads</span>
+                        <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> ${item.viewCount || 0} Views</span>
+                    </div>
+
+                    <a href="version.html?id=${item.id}" class="btn btn-primary btn-sm btn-block mt-3">
+                        <span>View Build Details</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            `;
+            return card;
+        }
+
+        // 6. Controller & Event Binding
+        function setupEventListeners() {
+            const searchInput = document.getElementById('global-search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const filterType = document.getElementById('filter-type');
+            const filterCategory = document.getElementById('filter-category');
+            const filterSort = document.getElementById('filter-sort');
+            const resetBtn = document.getElementById('reset-filters-btn');
+
+            let debounceTimer;
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                if (searchQuery.length > 0) {
+                    clearBtn.classList.remove('hidden');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    updateURLParams();
+                    executeSearch();
+                }, 200);
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchQuery = '';
+                clearBtn.classList.add('hidden');
+                updateURLParams();
+                executeSearch();
+            });
+
+            filterType.addEventListener('change', (e) => {
+                selectedType = e.target.value;
+                executeSearch();
+            });
+
+            filterCategory.addEventListener('change', (e) => {
+                selectedCategory = e.target.value;
+                executeSearch();
+            });
+
+            filterSort.addEventListener('change', (e) => {
+                selectedSort = e.target.value;
+                executeSearch();
+            });
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchQuery = '';
+                    selectedType = 'all';
+                    selectedCategory = 'all';
+                    selectedSort = 'relevance';
+
+                    filterType.value = 'all';
+                    filterCategory.value = 'all';
+                    filterSort.value = 'relevance';
+                    clearBtn.classList.add('hidden');
+
+                    updateURLParams();
+                    executeSearch();
+                });
+            }
+        }
+
+        function updateURLParams() {
+            const newUrl = new URL(window.location.href);
+            if (searchQuery.trim() !== '') {
+                newUrl.searchParams.set('q', searchQuery.trim());
+            } else {
+                newUrl.searchParams.delete('q');
+            }
+            window.history.replaceState({}, '', newUrl);
+        }
+
+        // Helpers
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
